@@ -1,0 +1,5 @@
+cron:
+
+- description: fetch devnull stats
+  url: /reload
+  schedule: every 20 minutes
