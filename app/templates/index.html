@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+{% autoescape true %}
+<html>
+<head><title>Devnull Unique Deaths thingy</title></head>
+  <body>
+    <p>Data last loaded {{data_date}}
+
+<form action='/unique' method='POST'>
+Username for unique deaths: <input name='username'>
+<input type='submit'>
+  </body>
+</html>
+{% endautoescape %}

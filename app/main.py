@@ -1,4 +1,3 @@
-import webapp2
 from google.appengine.api import files
 from google.appengine.api import urlfetch
 from google.appengine.ext import ndb
@@ -7,6 +6,15 @@ from google.appengine.ext import blobstore
 import csv
 import re
 import sys
+import os
+
+import webapp2
+import jinja2
+
+JINJA_ENVIRONMENT = jinja2.Environment(
+    loader=jinja2.FileSystemLoader(os.path.join(os.path.dirname(__file__), 'templates')),
+    extensions=['jinja2.ext.autoescape'],
+    autoescape=True)
 
 class Logfile(ndb.Model):
     bk = ndb.BlobKeyProperty()
@@ -20,8 +28,12 @@ class Logfile(ndb.Model):
 class MainPage(webapp2.RequestHandler):
 
     def get(self):
-        self.response.headers['Content-Type'] = 'text/plain'
-        self.response.write('Hello, World!')
+        bks = Logfile.singleton()
+
+        template_values = {'data_date': bks.datadate,
+                           }
+        template = JINJA_ENVIRONMENT.get_template('index.html')
+        self.response.write(template.render(template_values))
 
 class ReloadLogfile(webapp2.RequestHandler):
     def get(self):
@@ -75,10 +87,14 @@ class UniqueDeaths(webapp2.RequestHandler):
         for d in sorted(tmp):
             self.response.write(d + '\n')
 
+class UniqueRedir(webapp2.RequestHandler):
+    def post(self):
+        self.redirect("/unique/" + self.request.get('username'))
 
 application = webapp2.WSGIApplication(
     [
         ('/', MainPage),
         (r'/unique/(.*)', UniqueDeaths),
+        (r'/unique', UniqueRedir),
         (r'/reload', ReloadLogfile),
     ], debug=True)
