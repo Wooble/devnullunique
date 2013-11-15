@@ -89,7 +89,11 @@ class UniqueDeaths(webapp2.RequestHandler):
 
 class UniqueRedir(webapp2.RequestHandler):
     def post(self):
-        self.redirect("/unique/" + self.request.get('username'))
+        un = self.request.get('username')
+        if un is not None:
+            self.redirect("/unique/" + self.request.get('username'))
+        else:
+            self.redirect("/")
 
 application = webapp2.WSGIApplication(
     [
