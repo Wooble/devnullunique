@@ -77,7 +77,8 @@ class UniqueDeaths(webapp2.RequestHandler):
             for exp in possibledeaths:
                 if exp.match(death):
                     done.add(exp)
-                    
+                    break
+                
         self.response.write(str(len(done))+'\n')
 
         tmp = []
