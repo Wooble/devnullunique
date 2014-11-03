@@ -1,4 +1,4 @@
-.* called .*
+.* (called|named) .*
 .*\(with the Amulet\)
 .*\(with a fake Amulet\)
 .*\(in celestial disgrace\)
@@ -118,6 +118,7 @@ killed by an unsuccessful polymorph
 killed by a residual undead turning effect
 killed by an acidic corpse
 killed by a boulder
+killed by a cue boulder
 killed by a land mine
 killed by a cursed throne
 killed by an electric chair
