@@ -61,7 +61,7 @@ class UniqueDeaths(webapp2.RequestHandler):
 
         with open('death_yes.txt') as deathyes:
             for line in deathyes:
-                possibledeaths.add(re.compile(line.rstrip()+'$'))
+                possibledeaths.append(re.compile(line.rstrip()+'$'))
 
         bks = Logfile.singleton()
         scores = blobstore.BlobReader(bks.bk)
@@ -69,7 +69,7 @@ class UniqueDeaths(webapp2.RequestHandler):
 
         for line in reader:
             if username == line[15].split('=')[1]:
-                mydeaths.add(line[16].split('=')[1].decode('unicode-escape'))
+                mydeaths.append(line[16].split('=')[1].decode('unicode-escape'))
 
 
         for death in mydeaths:
@@ -82,10 +82,11 @@ class UniqueDeaths(webapp2.RequestHandler):
         self.response.write(str(len(done))+'\n')
 
         tmp = []
-        for d in possibledeaths - done:
-            tmp.append(d.pattern)
+        for d in possibledeaths:
+            if d not in done:
+                tmp.append(d.pattern)
 
-        for d in sorted(tmp):
+        for d in tmp:
             self.response.write(d + '\n')
 
 class UniqueRedir(webapp2.RequestHandler):
