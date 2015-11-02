@@ -1,3 +1,3 @@
 cd app
-wget https://nethack.devnull.net/tournament/scores.xlogfile
+wget -q https://nethack.devnull.net/tournament/scores.xlogfile -O scores.xlogfile
 appcfg.py update .
