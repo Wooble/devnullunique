@@ -38,17 +38,8 @@ class MainPage(webapp2.RequestHandler):
 class ReloadLogfile(webapp2.RequestHandler):
     def get(self):
         data = urlfetch.fetch('https://nethack.devnull.net/tournament/scores.xlogfile', deadline=60).content
-        file_name = files.blobstore.create(mime_type='text/plain')
-        with files.open(file_name, 'a') as xlf:
-            xlf.write(data)
-        files.finalize(file_name)
-        blob_key = files.blobstore.get_blob_key(file_name)
-        bks = Logfile.singleton()
-        oldbk = bks.bk
-        bks.bk = blob_key
-        bks.put()
-        if oldbk:
-            blobstore.delete(oldbk)
+
+        savescores(data)
         
 
 class UniqueDeaths(webapp2.RequestHandler):
@@ -58,13 +49,11 @@ class UniqueDeaths(webapp2.RequestHandler):
         possibledeaths=[]
         done=set()
 
-
         with open('death_yes.txt') as deathyes:
             for line in deathyes:
                 possibledeaths.append(re.compile(line.rstrip()+'$'))
 
-        bks = Logfile.singleton()
-        scores = blobstore.BlobReader(bks.bk)
+        scores = readscores()
         reader = csv.reader(scores, delimiter=':')
 
         for line in reader:
@@ -89,6 +78,7 @@ class UniqueDeaths(webapp2.RequestHandler):
         for d in tmp:
             self.response.write(d + '\n')
 
+
 class UniqueRedir(webapp2.RequestHandler):
     def post(self):
         un = self.request.get('username')
@@ -104,3 +94,14 @@ application = webapp2.WSGIApplication(
         (r'/unique', UniqueRedir),
         (r'/reload', ReloadLogfile),
     ], debug=True)
+
+
+def readscores():
+    """read scores from datastore, return filelike suitable for CSV reader"""
+    return open('scores.xlogfile', 'rb')  # FIXME: actually read from DS
+
+def savescores(data):
+    """write scores back to datastore, from string"""
+    # FIXME: actually save to DS here...
+
+    
