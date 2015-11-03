@@ -1,11 +1,8 @@
-from google.appengine.api import files
 from google.appengine.api import urlfetch
 from google.appengine.ext import ndb
-from google.appengine.ext import blobstore
 
 import csv
 import re
-import sys
 import os
 
 import webapp2
@@ -15,6 +12,7 @@ JINJA_ENVIRONMENT = jinja2.Environment(
     loader=jinja2.FileSystemLoader(os.path.join(os.path.dirname(__file__), 'templates')),
     extensions=['jinja2.ext.autoescape'],
     autoescape=True)
+
 
 class Logfile(ndb.Model):
     bk = ndb.BlobKeyProperty()
@@ -34,6 +32,7 @@ class MainPage(webapp2.RequestHandler):
                            }
         template = JINJA_ENVIRONMENT.get_template('index.html')
         self.response.write(template.render(template_values))
+
 
 class ReloadLogfile(webapp2.RequestHandler):
     def get(self):
@@ -87,6 +86,7 @@ class UniqueRedir(webapp2.RequestHandler):
         else:
             self.redirect("/")
 
+
 application = webapp2.WSGIApplication(
     [
         ('/', MainPage),
@@ -100,8 +100,7 @@ def readscores():
     """read scores from datastore, return filelike suitable for CSV reader"""
     return open('scores.xlogfile', 'rb')  # FIXME: actually read from DS
 
+
 def savescores(data):
     """write scores back to datastore, from string"""
     # FIXME: actually save to DS here...
-
-    
