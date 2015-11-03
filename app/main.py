@@ -9,7 +9,8 @@ import webapp2
 import jinja2
 
 JINJA_ENVIRONMENT = jinja2.Environment(
-    loader=jinja2.FileSystemLoader(os.path.join(os.path.dirname(__file__), 'templates')),
+    loader=jinja2.FileSystemLoader(os.path.join(os.path.dirname(__file__),
+                                                'templates')),
     extensions=['jinja2.ext.autoescape'],
     autoescape=True)
 
@@ -21,7 +22,7 @@ class Logfile(ndb.Model):
     @classmethod
     def singleton(cls):
         return cls.get_or_insert('SINGLE')
-    
+
 
 class MainPage(webapp2.RequestHandler):
 
@@ -36,17 +37,19 @@ class MainPage(webapp2.RequestHandler):
 
 class ReloadLogfile(webapp2.RequestHandler):
     def get(self):
-        data = urlfetch.fetch('https://nethack.devnull.net/tournament/scores.xlogfile', deadline=60).content
+        data = urlfetch.fetch(
+            'https://nethack.devnull.net/tournament/scores.xlogfile',
+            deadline=60).content
 
         savescores(data)
-        
+
 
 class UniqueDeaths(webapp2.RequestHandler):
     def get(self, username):
         self.response.headers['Content-Type'] = 'text/plain'
         mydeaths = []
-        possibledeaths=[]
-        done=set()
+        possibledeaths = []
+        done = set()
 
         with open('death_yes.txt') as deathyes:
             for line in deathyes:
@@ -57,16 +60,16 @@ class UniqueDeaths(webapp2.RequestHandler):
 
         for line in reader:
             if username == line[15].split('=')[1]:
-                mydeaths.append(line[16].split('=')[1].decode('unicode-escape'))
-
+                mydeaths.append(line[16]
+                                .split('=')[1].decode('unicode-escape'))
 
         for death in mydeaths:
-            death = death.replace('(with the Amulet)', '') # the tournament seems to do this; if so it's a bug...
+            # the tournament seems to do this; if so it's a bug...
+            death = death.replace('(with the Amulet)', '')
             for exp in possibledeaths:
                 if exp.match(death):
                     done.add(exp)
 
-                
         self.response.write(str(len(done))+'\n')
 
         tmp = []
