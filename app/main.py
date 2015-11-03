@@ -4,6 +4,7 @@ from google.appengine.ext import ndb
 import csv
 import re
 import os
+from cStringIO import StringIO
 
 import webapp2
 import jinja2
@@ -15,8 +16,8 @@ JINJA_ENVIRONMENT = jinja2.Environment(
     autoescape=True)
 
 
-class Logfile(ndb.Model):
-    bk = ndb.BlobKeyProperty()
+class LogfileSection(ndb.Model):
+    data = ndb.BlobProperty()
     datadate = ndb.DateTimeProperty(auto_now=True)
 
     @classmethod
@@ -27,7 +28,7 @@ class Logfile(ndb.Model):
 class MainPage(webapp2.RequestHandler):
 
     def get(self):
-        bks = Logfile.singleton()
+        bks = LogfileSection.singleton()
 
         template_values = {'data_date': bks.datadate,
                            }
@@ -101,9 +102,12 @@ application = webapp2.WSGIApplication(
 
 def readscores():
     """read scores from datastore, return filelike suitable for CSV reader"""
-    return open('scores.xlogfile', 'rb')  # FIXME: actually read from DS
+    bks = LogfileSection.singleton()
+    return StringIO(bks.data)
 
 
 def savescores(data):
     """write scores back to datastore, from string"""
-    # FIXME: actually save to DS here...
+    bks = LogfileSection.singleton()
+    bks.data = data
+    bks.put()
