@@ -71,15 +71,18 @@ class UniqueDeaths(webapp2.RequestHandler):
                 if exp.match(death.replace('\\', '').replace(' *', '')):
                     done.add(exp)
 
-        self.response.write(str(len(done))+'\n')
-
-        tmp = []
+        deaths = []
         for d in possibledeaths:
             if d not in done:
-                tmp.append(d.pattern)
-
-        for d in tmp:
-            self.response.write(d + '\n')
+                deaths.append(('red', d.pattern))
+            else:
+                deaths.append(('green', d.pattern))
+        template_values = {'deaths': deaths,
+                           'count': len(done),
+                           'player': username
+                           }
+        template = JINJA_ENVIRONMENT.get_template('deaths.html')
+        self.response.write(template.render(template_values))
 
 
 class UniqueRedir(webapp2.RequestHandler):

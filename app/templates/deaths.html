@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>/dev/null tournament unique deaths for {{player}}</title>
+</head>
+<body>
+<p>Total unique deaths: {{count}}</p>
+<ul>
+{% for death in deaths %}
+<li>
+    <div style="color:{{death.0}}">{{death.1}}</div>
+</li>
+{% endfor %}
+</ul>
+</body>
+</html>
