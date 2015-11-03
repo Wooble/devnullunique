@@ -47,7 +47,6 @@ class ReloadLogfile(webapp2.RequestHandler):
 
 class UniqueDeaths(webapp2.RequestHandler):
     def get(self, username):
-        self.response.headers['Content-Type'] = 'text/plain'
         mydeaths = []
         possibledeaths = []
         done = set()
