@@ -68,7 +68,7 @@ class UniqueDeaths(webapp2.RequestHandler):
             # the tournament seems to do this; if so it's a bug...
             death = death.replace('(with the Amulet)', '')
             for exp in possibledeaths:
-                if exp.match(death):
+                if exp.match(death.replace('\\', '')):
                     done.add(exp)
 
         self.response.write(str(len(done))+'\n')
