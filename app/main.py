@@ -1,3 +1,4 @@
+"""devnull nethack tournament unique deaths"""
 from google.appengine.api import urlfetch
 from google.appengine.ext import ndb
 
@@ -39,7 +40,6 @@ class LogfileSection(ndb.Model):
 
 
 class MainPage(webapp2.RequestHandler):
-
     def get(self):
         bks = LogMetadata.singleton()
 
@@ -98,7 +98,7 @@ class UniqueDeaths(webapp2.RequestHandler):
                 deaths.append(('green', d.pattern))
         template_values = {'deaths': deaths,
                            'count': len(done),
-                           'player': username
+                           'player': username,
                            }
         template = JINJA_ENVIRONMENT.get_template('deaths.html')
         self.response.write(template.render(template_values))
