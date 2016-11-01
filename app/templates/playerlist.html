@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>/dev/null tournament player list</title>
+</head>
+<body>
+
+<ul>
+{% for player in players %}
+<li>
+    {{player}} <a href='/unique/{{player}}'>unique deaths</a>
+</li>
+{% endfor %}
+</ul>
+</body>
+</html>

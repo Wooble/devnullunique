@@ -113,9 +113,36 @@ class UniqueRedir(webapp2.RequestHandler):
             self.redirect("/")
 
 
+class Explodes(webapp2.RequestHandler):
+    def get(self):
+        template_values = {}
+        template = JINJA_ENVIRONMENT.get_template('explodes.html')
+        self.response.write(template.render(template_values))
+
+
+class PlayerList(webapp2.RequestHandler):
+    def get(self):
+        template = JINJA_ENVIRONMENT.get_template('playerlist.html')
+        players = set()
+        scores = readscores()
+        reader = csv.reader(scores, delimiter=':')
+
+        for i, line in enumerate(reader):
+            try:
+                username = line[15].split('=')[1]
+                players.add(username)
+            except IndexError:
+                logging.error("failed for line %s [%s]", i, line)
+                raise
+
+        template_values = {'players': sorted(players)}
+        self.response.write(template.render(template_values))
+
 application = webapp2.WSGIApplication(
     [
         ('/', MainPage),
+        ('/itexplodes', Explodes),
+        ('/playerlist', PlayerList),
         (r'/unique/(.*)', UniqueDeaths),
         (r'/unique', UniqueRedir),
         (r'/reload', ReloadLogfile),
