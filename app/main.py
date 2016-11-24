@@ -2,6 +2,7 @@
 from google.appengine.api import urlfetch
 from google.appengine.ext import ndb
 
+import collections
 import csv
 import re
 import os
@@ -62,7 +63,7 @@ class UniqueDeaths(webapp2.RequestHandler):
     def get(self, username):
         mydeaths = []
         possibledeaths = []
-        done = set()
+        done = collections.Counter()
 
         with open('death_yes.txt') as deathyes:
             for line in deathyes:
@@ -86,7 +87,7 @@ class UniqueDeaths(webapp2.RequestHandler):
             #death = death.replace('(with the Amulet)', '')
             for i, exp in enumerate(possibledeaths):
                 if exp and exp.search(death.replace('\\', '').replace(' *', '')):
-                    done.add(exp)
+                    done[exp] += 1
                     possibledeaths[i] = None
                     break
 
@@ -95,7 +96,7 @@ class UniqueDeaths(webapp2.RequestHandler):
             if d not in done:
                 deaths.append(('red', d.pattern))
             else:
-                deaths.append(('green', d.pattern))
+                deaths.append(('green', d.pattern + ('(x%d)' % done[d])))
         template_values = {'deaths': deaths,
                            'count': len(done),
                            'player': username,
